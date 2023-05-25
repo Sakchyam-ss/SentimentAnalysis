@@ -1,5 +1,15 @@
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-pip install transformers requests beautifulsoup4 pandas numpy 
+#installing dependencies before importing so no error
+import subprocess
+
+packages = [
+    'torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118',
+    'transformers requests beautifulsoup4 pandas numpy'
+]
+
+# Run the pip install commands
+for package in packages:
+    subprocess.call(['pip', 'install', package], shell=True)
+
 
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import streamlit as st
