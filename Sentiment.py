@@ -1,3 +1,6 @@
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install transformers requests beautifulsoup4 pandas numpy 
+
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import streamlit as st
 import torch
