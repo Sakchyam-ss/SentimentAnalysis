@@ -1,0 +1,1 @@
+streamlit run Sentiment.py

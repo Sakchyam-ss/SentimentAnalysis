@@ -1,17 +1,6 @@
-#installing dependencies before importing so no error
-import subprocess
-
-packages = [
-    'torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118',
-    'transformers requests beautifulsoup4 pandas numpy'
-]
-
-# Run the pip install commands
-for package in packages:
-    subprocess.call(['pip', 'install', package], shell=True)
-
-
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import validation
+
 import streamlit as st
 import torch
 import time
@@ -29,16 +18,41 @@ with open('style.css') as f:
 
 
 st.title("Sentiment Analysis Using NLP")
-st.caption("Unlock the power of sentiment analysis with our app.Simply input your own text, provide a Yelp business URL, or upload a file, and let our app do the rest. ")
+st.caption("Unlock the power of sentiment analysis with our app.Simply input your own text, provide a Yelp business URL, or upload a file, and let our app do the rest. The app also support different languages like Dutch, German, French, Spanish and Italian.")
 
 
 #Options for the user to choose what to analyse
+
+#User Enters own Text
 ownText = st.text_input("Enter your own text:")
 st.write("Or")
+
+# Validate user text input
+if ownText and not validation.is_valid_text(ownText):
+    st.error("Invalid input. Please provide some text.")
+    st.stop()
+
+#User enters Yelp url
 url = st.text_input("Enter the Yelp business URL:")
+
+# Validate Yelp business URL
+if url and not validation.is_valid_yelp_url(url):
+    st.error("Invalid Yelp business URL. Please provide a valid URL.")
+    st.stop()
+
 st.write("Or")
+
+#User enters csv file
 with st.expander('Upload a File'):
     uploadedFile = st.file_uploader(" ")
+
+# Check if a file is uploaded
+    if uploadedFile is not None:
+        # Check the file format (e.g., extension)
+        file_extension = uploadedFile.name.split(".")[-1]
+        if not validation.is_valid_file_format(file_extension, validation.EXPECTED_FILE_FORMATS):
+            st.error("Invalid file format. Please upload a CSV file.")
+            st.stop()
 
 st.markdown("---")
 
@@ -87,7 +101,7 @@ with st.container():
         time.sleep(1)
         st.write("Printing Result....")
     
-        time.sleep(2)
+        time.sleep(1)
         st.markdown("---")
         st.write("Result:")
         st.write(f"The Text : {ownText}")
@@ -107,7 +121,7 @@ with st.container():
         time.sleep(1)
         st.write("Printing Result....")
 
-        time.sleep(2)
+        time.sleep(1)
         st.markdown("---")
         st.write("Result:")
         st.write(df)
@@ -134,7 +148,7 @@ with st.container():
         time.sleep(1)
         st.write("Printing Result....")
 
-        time.sleep(2)
+        time.sleep(1)
         st.markdown("---")
         st.write("Result:")
         st.table(result_df)
@@ -147,3 +161,9 @@ with st.container():
             file_name='sentiment.csv',
             mime='text/csv'
         )
+
+
+st.markdown(
+    '<div class="footer-link"><a href="mailto:ssakchyam@gmail.com">Contact Us</a></div>',
+    unsafe_allow_html=True
+)
